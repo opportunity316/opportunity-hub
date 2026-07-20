@@ -1,0 +1,477 @@
+# opportunity-hub
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opportunity Hub | Find Opportunities That Match You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Sora:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --royal:#3B4FE0; --purple:#8B3DF6; --teal:#14B8A6;
+    --bg:#F8FAFC; --text:#0F172A; --muted:#5B6478; --border:#E5E9F2;
+    --radius:18px;
+    --shadow-sm:0 2px 10px rgba(15,23,42,.06);
+    --shadow-md:0 12px 30px rgba(59,79,224,.14);
+    --gradient:linear-gradient(90deg,var(--royal),var(--purple));
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+  h1,h2,h3{ font-family:'Sora',sans-serif; }
+  a{ text-decoration:none; color:inherit; }
+
+  .gradient-text{ background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .vibrant-text{ font-family:'Baloo 2',sans-serif; letter-spacing:0.02em; font-size:16px; }
+
+  /* ambient glow */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1;
+    background:radial-gradient(circle at 10% 0%, rgba(59,79,224,.15), transparent 40%),
+               radial-gradient(circle at 90% 20%, rgba(139,61,246,.12), transparent 40%),
+               radial-gradient(circle at 40% 100%, rgba(20,184,166,.10), transparent 40%);
+  }
+
+  /* header */
+  header{ position:sticky; top:0; z-index:10; background:rgba(248,250,252,.8); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  header .inner{ max-width:1200px; margin:auto; display:flex; align-items:center; gap:18px; padding:14px 32px; }
+  .brand{ display:flex; align-items:center; gap:16px; font-weight:800; white-space:nowrap; }
+  .brand-mark{ width:56px; height:56px; border-radius:50%; object-fit:cover; mix-blend-mode:multiply; }
+  body.dark .brand-mark{ mix-blend-mode:normal; background:#fff; padding:4px; }
+  .brand-name{ font-family:'Baloo 2',sans-serif; font-size:34px; letter-spacing:0.01em; }
+  .pipe{ color:var(--border); font-size:28px; font-weight:300; }
+  .search{ flex:1; max-width:420px; margin:auto; position:relative; display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:9px 16px; box-shadow:var(--shadow-sm); }
+  .search input{ border:none; outline:none; flex:1; font-size:14px; background:transparent; color:var(--text); }
+
+  .search-results{
+    position:absolute; left:0; right:0; top:calc(100% + 10px);
+    background:#fff; border:1px solid var(--border); border-radius:14px;
+    box-shadow:var(--shadow-md); max-height:340px; overflow-y:auto;
+    padding:8px; display:none; text-align:left; z-index:30;
+  }
+  .search-results.show{ display:block; }
+  .result-item{ display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:10px; cursor:pointer; }
+  .result-item:hover{ background:#F1F4FF; }
+  .result-icon{ font-size:18px; flex-shrink:0; }
+  .result-text{ flex:1; }
+  .result-title{ font-size:14px; font-weight:600; color:var(--text); }
+  .result-cat{ font-size:12px; color:var(--muted); }
+  .result-tag{ font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; flex-shrink:0; }
+  .result-tag.schemes{ background:#E9EBFF; color:var(--royal); }
+  .result-tag.scholarships{ background:#F3E8FF; color:var(--purple); }
+  .result-tag.internships{ background:#E1FBF6; color:var(--teal); }
+  .no-results{ padding:16px; text-align:center; color:var(--muted); font-size:13.5px; }
+  body.dark .search-results{ background:#171F33; border-color:#2B3654; }
+  body.dark .result-item:hover{ background:#1F2A45; }
+
+  .theme-toggle{ flex-shrink:0; width:38px; height:38px; border-radius:50%; border:1px solid var(--border); background:#fff; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); transition:.2s; }
+  .theme-toggle:hover{ border-color:var(--royal); transform:translateY(-2px); }
+
+  /* dark mode */
+  body.dark{
+    --bg:#0F1420; --text:#E8ECF7; --muted:#9AA5C0; --border:#2B3654;
+  }
+  body.dark header{ background:rgba(15,20,32,.85); }
+  body.dark .search, body.dark .theme-toggle, body.dark .card, body.dark .why-item,
+  body.dark .dropdown, body.dark .user-chip, body.dark .btn-ghost,
+  body.dark .contact-item{
+    background:#171F33; border-color:#2B3654;
+    box-shadow:0 2px 10px rgba(0,0,0,.35);
+  }
+  body.dark .stat{
+    background:linear-gradient(135deg, rgba(59,79,224,.18), rgba(139,61,246,.16));
+    border-color:#2B3654;
+  }
+  body.dark .card:hover, body.dark .why-item:hover{ box-shadow:0 12px 30px rgba(0,0,0,.5); }
+  body.dark .why{ background:linear-gradient(135deg,#161A2C,#1B1730,#102420); }
+  body.dark .hero-art svg rect[fill="url(#gradBoard)"]{ fill:#171F33; }
+  body.dark #backToTop{ box-shadow:0 12px 30px rgba(0,0,0,.5); }
+
+  .btn{ font-weight:600; font-size:14px; border:none; cursor:pointer; border-radius:999px; padding:10px 22px; transition:.2s; }
+  .btn-primary{ background:var(--gradient); color:#fff; box-shadow:var(--shadow-md); }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-ghost{ background:#fff; border:1px solid var(--border); box-shadow:var(--shadow-sm); }
+  .btn-ghost:hover{ border-color:var(--royal); color:var(--royal); }
+
+  .auth{ position:relative; flex-shrink:0; }
+  .user-chip{ display:none; align-items:center; gap:8px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 12px 6px 6px; cursor:pointer; box-shadow:var(--shadow-sm); }
+  .user-chip.active{ display:flex; }
+  .avatar{ width:28px; height:28px; border-radius:50%; background:var(--gradient); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; }
+  .dropdown{ position:absolute; right:0; top:calc(100% + 8px); background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:var(--shadow-md); width:190px; padding:8px; display:none; flex-direction:column; }
+  .dropdown.show{ display:flex; }
+  .dropdown a{ padding:9px 12px; border-radius:9px; font-size:14px; font-weight:500; }
+  .dropdown a:hover{ background:#F1F4FF; }
+  .dropdown a.logout{ color:#E24C4C; }
+
+  /* hero */
+  .hero{ max-width:1200px; margin:auto; padding:80px 32px 60px; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; }
+  .hero-text{ max-width:520px; }
+  .eyebrow{ display:inline-block; background:#fff; border:1px solid var(--border); padding:7px 16px; border-radius:999px; font-size:13px; font-weight:600; color:var(--royal); box-shadow:var(--shadow-sm); margin-bottom:26px; }
+  .hero h1{ font-family:'Baloo 2',sans-serif; font-size:clamp(32px,4.4vw,52px); font-weight:800; line-height:1.15; letter-spacing:-0.01em; }
+  .hero p{ margin-top:20px; font-size:17px; color:var(--muted); }
+  .hero-cta{ margin-top:32px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn-lg{ padding:14px 28px; font-size:15px; }
+  .hero-art{ display:flex; justify-content:center; }
+  .hero-art svg{ width:100%; max-width:420px; height:auto; }
+
+  /* illustration animations */
+  @keyframes float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+  @keyframes popIn{ 0%{ opacity:0; transform:scale(.4); } 60%{ opacity:1; transform:scale(1.15); } 100%{ opacity:1; transform:scale(1); } }
+  @keyframes drawLine{ from{ stroke-dashoffset:60; } to{ stroke-dashoffset:0; } }
+  @keyframes drift{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(6px,-8px); } }
+  .float-group{ animation:float 4s ease-in-out infinite; }
+  .check-1{ animation:popIn .5s ease .3s both; }
+  .check-2{ animation:popIn .5s ease .9s both; }
+  .check-3{ animation:popIn .5s ease 1.5s both; }
+  .pencil-line{ stroke-dasharray:60; stroke-dashoffset:60; animation:drawLine 1.2s ease .2s forwards; }
+  .sparkle{ animation:drift 3.5s ease-in-out infinite; }
+  .sparkle-2{ animation-delay:.8s; }
+  .sparkle-3{ animation-delay:1.6s; }
+  @media (prefers-reduced-motion: reduce){
+    .float-group,.check-1,.check-2,.check-3,.pencil-line,.sparkle{ animation:none; }
+  }
+
+  @media (max-width:900px){
+    .hero{ grid-template-columns:1fr; text-align:center; padding-top:60px; }
+    .hero-text{ max-width:100%; margin:auto; }
+    .hero-cta{ justify-content:center; }
+    .hero-art{ order:-1; }
+    .hero-art svg{ max-width:280px; }
+  }
+
+  section{ padding:56px 24px; max-width:1200px; margin:auto; scroll-margin-top:80px; }
+  .section-head{ text-align:center; max-width:580px; margin:0 auto 42px; }
+  .section-head h2{ font-size:clamp(24px,3.4vw,34px); font-weight:800; }
+  .section-head p{ color:var(--muted); margin-top:10px; }
+
+  /* category cards */
+  .cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .card{ background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:30px 26px; box-shadow:var(--shadow-sm); transition:.25s; }
+  .card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-md); }
+  .card .icon{ font-size:26px; width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+  .card.schemes .icon{ background:linear-gradient(135deg,var(--royal),#5B3DF6); }
+  .card.scholarships .icon{ background:linear-gradient(135deg,var(--purple),#B85CF6); }
+  .card.internships .icon{ background:linear-gradient(135deg,var(--teal),#0EA5A5); }
+  .card h3{ font-size:19px; margin-bottom:6px; }
+  .card p{ color:var(--muted); font-size:14.5px; margin-bottom:14px; }
+  .card a{ font-size:14px; font-weight:600; }
+  .card.schemes a{ color:var(--royal); }
+  .card.scholarships a{ color:var(--purple); }
+  .card.internships a{ color:var(--teal); }
+  .trend-badge{ display:inline-block; font-size:11.5px; font-weight:700; color:#E8702A; background:#FFF1E6; padding:4px 10px; border-radius:999px; margin-bottom:10px; }
+  body.dark .trend-badge{ background:#3A2412; color:#FFB877; }
+  .vibrant-heading{ font-family:'Baloo 2',sans-serif; letter-spacing:0.01em; }
+
+  /* stats */
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:18px; }
+  .stat{ text-align:center; background:linear-gradient(135deg, rgba(59,79,224,.06), rgba(139,61,246,.06)); border:1px solid var(--border); border-radius:var(--radius); padding:26px; }
+  .stat b{ font-family:'Sora',sans-serif; font-size:clamp(28px,4vw,38px); display:block; background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .stat span{ color:var(--muted); font-size:13.5px; font-weight:600; }
+
+  /* why section */
+  .why{ background:linear-gradient(135deg,#EEF1FF,#F6EEFF,#EAFBF8); border-radius:28px; padding:56px 36px; }
+  .why-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+  .why-item{ background:#fff; border-radius:16px; padding:24px 18px; box-shadow:var(--shadow-sm); transition:.25s; }
+  .why-item:hover{ transform:translateY(-5px); }
+  .why-item .icon{ font-size:22px; margin-bottom:10px; }
+  .why-item h4{ font-size:15.5px; margin-bottom:5px; }
+  .why-item p{ font-size:13px; color:var(--muted); }
+
+  /* about/contact */
+  .about-contact{ display:grid; grid-template-columns:1.2fr 1fr; gap:36px; }
+  .about-contact h2{ font-size:24px; font-weight:800; margin-bottom:12px; }
+  .about-contact > div:first-child p{ color:var(--muted); line-height:1.7; }
+  .contact-item{ display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:14px; padding:13px 16px; font-size:14px; margin-bottom:10px; box-shadow:var(--shadow-sm); }
+
+  footer{ text-align:center; padding:26px; color:var(--muted); font-size:13.5px; border-top:1px solid var(--border); }
+
+  #backToTop{
+    position:fixed; bottom:26px; right:26px; width:46px; height:46px; border-radius:50%;
+    background:var(--gradient); color:#fff; border:none; font-size:20px; cursor:pointer;
+    box-shadow:var(--shadow-md); opacity:0; pointer-events:none; transform:translateY(10px);
+    transition:.25s; z-index:20;
+  }
+  #backToTop.show{ opacity:1; pointer-events:auto; transform:translateY(0); }
+  #backToTop:hover{ transform:translateY(-3px); }
+
+  @media (max-width:900px){
+    .cards, .stats, .about-contact{ grid-template-columns:1fr; }
+    .why-grid{ grid-template-columns:repeat(2,1fr); }
+    .search{ display:none; }
+  }
+  @media (max-width:560px){ .why-grid{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="brand">
+      <img src="logo.png" alt="Opportunity Hub logo" class="brand-mark"><span class="pipe">|</span>
+      <span class="gradient-text brand-name">Opportunity Hub</span><span class="pipe">|</span>
+    </div>
+    <div class="search" id="searchBox">
+      <span>🔍</span><input placeholder="Search schemes, scholarships, internships..." id="searchInput" oninput="handleSearch()" onfocus="handleSearch()">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+    <div class="auth" id="authArea">
+      <button class="btn btn-primary" id="loginBtn" onclick="toggleAuth()">Log in</button>
+      <div class="user-chip" id="userChip" onclick="toggleDropdown()">
+        <div class="avatar">A</div><span>Aditi</span><span>▾</span>
+        <div class="dropdown" id="dropdown">
+          <a href="#">Profile</a>
+          <a href="#">Saved opportunities</a>
+          <a href="#" class="logout" onclick="event.stopPropagation(); toggleAuth();">Log out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-text">
+      <div class="eyebrow">✨ 2,500+ verified opportunities and counting</div>
+      <h1 class="gradient-text">Find opportunities that match you</h1>
+      <p>Discover government schemes, scholarships, and internships tailored to your profile — all in one platform.</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg vibrant-text" onclick="scrollToCategories()">Search Opportunities ↓</button>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <svg viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gradBody" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#3B4FE0"/>
+            <stop offset="100%" stop-color="#8B3DF6"/>
+          </linearGradient>
+          <linearGradient id="gradBoard" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#F1F4FF"/>
+          </linearGradient>
+        </defs>
+
+        <!-- backdrop blob -->
+        <circle cx="210" cy="215" r="165" fill="#3B4FE0" opacity="0.07"/>
+        <circle cx="210" cy="215" r="120" fill="#14B8A6" opacity="0.06"/>
+
+        <!-- floating sparkles -->
+        <circle class="sparkle sparkle-1" cx="70" cy="90" r="6" fill="#14B8A6"/>
+        <circle class="sparkle sparkle-2" cx="350" cy="120" r="5" fill="#8B3DF6"/>
+        <circle class="sparkle sparkle-3" cx="330" cy="320" r="7" fill="#3B4FE0"/>
+        <rect class="sparkle sparkle-2" x="55" y="300" width="10" height="10" rx="3" fill="#8B3DF6"/>
+
+        <g class="float-group">
+          <!-- person -->
+          <circle cx="180" cy="120" r="34" fill="#FBCFA0"/>
+          <path d="M150 108c0-20 16-32 30-32s30 12 30 32c-10 6-50 6-60 0z" fill="#0F172A"/>
+          <path d="M120 260c4-46 30-72 60-72s56 26 60 72c-36 16-84 16-120 0z" fill="url(#gradBody)"/>
+
+          <!-- clipboard -->
+          <g transform="translate(205,150)">
+            <rect x="0" y="0" width="92" height="118" rx="10" fill="url(#gradBoard)" stroke="#E5E9F2" stroke-width="2"/>
+            <rect x="28" y="-8" width="36" height="16" rx="6" fill="#3B4FE0"/>
+
+            <!-- checklist lines -->
+            <circle class="check-1" cx="18" cy="30" r="8" fill="#14B8A6"/>
+            <path class="check-1" d="M14 30l3 3 7-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect class="pencil-line" x="34" y="26" width="46" height="8" rx="4" fill="#DCE2F5"/>
+
+            <circle class="check-2" cx="18" cy="58" r="8" fill="#8B3DF6"/>
+            <path class="check-2" d="M14 58l3 3 7-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="34" y="54" width="46" height="8" rx="4" fill="#DCE2F5"/>
+
+            <circle class="check-3" cx="18" cy="86" r="8" fill="#3B4FE0"/>
+            <path class="check-3" d="M14 86l3 3 7-7" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="34" y="82" width="46" height="8" rx="4" fill="#DCE2F5"/>
+          </g>
+        </g>
+
+        <!-- ground shadow -->
+        <ellipse cx="205" cy="392" rx="95" ry="12" fill="#3B4FE0" opacity="0.08"/>
+      </svg>
+    </div>
+  </section>
+
+  <section id="categories">
+    <div class="section-head">
+      <h2>Choose your opportunity</h2>
+      <p>Every path is matched to your profile, not the other way around.</p>
+    </div>
+    <div class="cards">
+      <div class="card schemes">
+        <div class="icon">🏛️</div>
+        <h3>Schemes</h3><p>Access welfare and development programs.</p>
+        <a href="#">Explore schemes →</a>
+      </div>
+      <div class="card scholarships">
+        <div class="icon">🎓</div>
+        <h3>Scholarships</h3><p>Support your education with financial aid.</p>
+        <a href="#">Explore scholarships →</a>
+      </div>
+      <div class="card internships">
+        <div class="icon">💼</div>
+        <h3>Internships</h3><p>Build experience and launch your career.</p>
+        <a href="#">Explore internships →</a>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>500+</b><span>Government schemes</span></div>
+      <div class="stat"><b>1200+</b><span>Scholarships</span></div>
+      <div class="stat"><b>800+</b><span>Internships</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2 class="gradient-text vibrant-heading">Trending Opportunities</h2>
+      <p>Popular picks other users are checking out this month.</p>
+    </div>
+    <div class="cards">
+      <div class="card schemes">
+        <div class="icon">🏛️</div>
+        <span class="trend-badge">🔥 Trending</span>
+        <h3>PM Vishwakarma Yojana</h3><p>Support scheme for traditional artisans and craftspeople.</p>
+        <a href="#">View details →</a>
+      </div>
+      <div class="card scholarships">
+        <div class="icon">🎓</div>
+        <span class="trend-badge">🔥 Trending</span>
+        <h3>National Merit Scholarship</h3><p>Financial aid for high-performing undergraduate students.</p>
+        <a href="#">View details →</a>
+      </div>
+      <div class="card internships">
+        <div class="icon">💼</div>
+        <span class="trend-badge">🔥 Trending</span>
+        <h3>PM Internship Scheme</h3><p>Paid internships with top companies for young graduates.</p>
+        <a href="#">View details →</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="why">
+      <div class="section-head">
+        <h2 class="gradient-text">Why Opportunity Hub?</h2>
+        <p>Built to remove the guesswork from finding what you actually qualify for.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-item"><div class="icon">🎯</div><h4>Personalized matching</h4><p>See only what you're eligible for.</p></div>
+        <div class="why-item"><div class="icon">⏱️</div><h4>Saves you time</h4><p>No more digging through dozens of sites.</p></div>
+        <div class="why-item"><div class="icon">✅</div><h4>Verified opportunities</h4><p>Checked and kept up to date.</p></div>
+        <div class="why-item"><div class="icon">🌍</div><h4>Built for everyone</h4><p>Students and citizens, all in one place.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-contact">
+    <div>
+      <h2>About us</h2>
+      <p>Every year, thousands of government schemes, scholarships, and internships go unused — not because people aren't eligible, but because finding the right one means digging through dozens of scattered websites, notices, and PDFs.</p>
+      <p style="margin-top:14px;">Opportunity Hub was built to close that gap. Tell us about yourself once — your education, income, location, and interests — and we instantly match you with the opportunities you actually qualify for, all verified and kept up to date.</p>
+      <p style="margin-top:14px;">Our mission is simple: make sure no student or citizen misses out on an opportunity they deserve, just because they didn't know it existed.</p>
+    </div>
+    <div>
+      <h2>Contact</h2>
+      <div class="contact-item">📧 hubopportunity3@gmail.com</div>
+      <div class="contact-item">📞 +91 98765 43210</div>
+      <div class="contact-item">📍 Andhra Pradesh, India</div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 Opportunity Hub. All rights reserved.</footer>
+
+<button id="backToTop" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
+<script>
+  function toggleAuth(){
+    document.getElementById('loginBtn').classList.toggle('hidden');
+    document.getElementById('loginBtn').style.display = document.getElementById('loginBtn').style.display === 'none' ? 'inline-block' : 'none';
+    document.getElementById('userChip').classList.toggle('active');
+    document.getElementById('dropdown').classList.remove('show');
+  }
+  // Sample dataset — replace this with a real API call to your backend later.
+  // Each entry needs: name, category (schemes/scholarships/internships), and icon.
+  const opportunities = [
+    { name: "PM Vishwakarma Yojana", category: "schemes", icon: "🏛️" },
+    { name: "Ayushman Bharat Health Scheme", category: "schemes", icon: "🏛️" },
+    { name: "PM Awas Yojana (Housing Scheme)", category: "schemes", icon: "🏛️" },
+    { name: "Startup India Seed Fund", category: "schemes", icon: "🏛️" },
+    { name: "National Merit Scholarship", category: "scholarships", icon: "🎓" },
+    { name: "Post-Matric Scholarship for SC/ST", category: "scholarships", icon: "🎓" },
+    { name: "AICTE Pragati Scholarship for Girls", category: "scholarships", icon: "🎓" },
+    { name: "Central Sector Scholarship Scheme", category: "scholarships", icon: "🎓" },
+    { name: "PM Internship Scheme", category: "internships", icon: "💼" },
+    { name: "Software Development Internship", category: "internships", icon: "💼" },
+    { name: "Government Policy Research Internship", category: "internships", icon: "💼" },
+    { name: "Rural Development Internship", category: "internships", icon: "💼" }
+  ];
+
+  function handleSearch(){
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const resultsBox = document.getElementById('searchResults');
+
+    if(query.length === 0){
+      resultsBox.classList.remove('show');
+      resultsBox.innerHTML = '';
+      return;
+    }
+
+    const matches = opportunities.filter(item => item.name.toLowerCase().includes(query));
+
+    resultsBox.innerHTML = matches.length
+      ? matches.map(item => `
+          <div class="result-item" onclick="selectResult('${item.name.replace(/'/g,"\\'")}')">
+            <span class="result-icon">${item.icon}</span>
+            <div class="result-text">
+              <div class="result-title">${item.name}</div>
+            </div>
+            <span class="result-tag ${item.category}">${item.category}</span>
+          </div>
+        `).join('')
+      : `<div class="no-results">No matches for "${query}"</div>`;
+
+    resultsBox.classList.add('show');
+  }
+
+  function selectResult(name){
+    document.getElementById('searchInput').value = name;
+    document.getElementById('searchResults').classList.remove('show');
+  }
+
+  document.addEventListener('click', e => {
+    if(!document.getElementById('searchBox').contains(e.target)){
+      document.getElementById('searchResults').classList.remove('show');
+    }
+  });
+
+  function toggleDropdown(){ document.getElementById('dropdown').classList.toggle('show'); }
+  document.addEventListener('click', e => {
+    if(!document.getElementById('authArea').contains(e.target)) document.getElementById('dropdown').classList.remove('show');
+  });
+
+  function toggleTheme(){
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
+  }
+
+  function scrollToCategories(){
+    document.getElementById('categories').scrollIntoView({ behavior:'smooth' });
+  }
+
+  function scrollToTop(){
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('show', window.scrollY > 500);
+  });
+</script>
+
+</body>
+</html>

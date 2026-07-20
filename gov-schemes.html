@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Government Schemes | Opportunity Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Sora:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --royal:#3B4FE0; --purple:#8B3DF6; --teal:#14B8A6;
+    --bg:#F8FAFC; --text:#0F172A; --muted:#5B6478; --border:#E5E9F2;
+    --radius:18px;
+    --shadow-sm:0 2px 10px rgba(15,23,42,.06);
+    --shadow-md:0 12px 30px rgba(59,79,224,.14);
+    --gradient:linear-gradient(90deg,var(--royal),var(--purple));
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.5; }
+  @keyframes shiftBg{
+    0%{ background-position:0% 50%; }
+    50%{ background-position:100% 50%; }
+    100%{ background-position:0% 50%; }
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1;
+    background:linear-gradient(120deg,
+      rgba(59,79,224,.16), rgba(139,61,246,.14), rgba(20,184,166,.13),
+      rgba(139,61,246,.14), rgba(59,79,224,.16));
+    background-size:300% 300%;
+    animation:shiftBg 16s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ body::before{ animation:none; } }
+  h1,h2,h3{ font-family:'Sora',sans-serif; }
+  a{ text-decoration:none; color:inherit; }
+  .gradient-text{ background:var(--gradient); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  /* header */
+  header{ position:sticky; top:0; z-index:10; background:rgba(248,250,252,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
+  header .inner{ max-width:1200px; margin:auto; display:flex; align-items:center; gap:18px; padding:14px 32px; }
+  .brand{ display:flex; align-items:center; gap:14px; font-weight:800; white-space:nowrap; }
+  .brand-mark{ width:44px; height:44px; border-radius:50%; object-fit:cover; mix-blend-mode:multiply; }
+  .brand-name{ font-family:'Baloo 2',sans-serif; font-size:24px; }
+  .back-link{ margin-left:auto; font-size:14px; font-weight:600; color:var(--royal); display:flex; align-items:center; gap:6px; }
+  .back-link:hover{ text-decoration:underline; }
+
+  /* page head */
+  .page-head{ max-width:1200px; margin:auto; padding:64px 32px 24px; text-align:center; }
+  .page-title{ display:flex; align-items:center; justify-content:center; gap:18px; }
+  .title-icon{
+    width:70px; height:70px; border-radius:20px; flex-shrink:0;
+    background:linear-gradient(135deg,var(--royal),var(--purple));
+    display:flex; align-items:center; justify-content:center; font-size:36px;
+    box-shadow:var(--shadow-md);
+  }
+  .page-head h1{ font-family:'Baloo 2',sans-serif; font-weight:800; font-size:clamp(36px,6vw,64px); letter-spacing:0.01em; }
+  .page-head p{ color:var(--muted); margin-top:14px; font-size:17px; }
+
+  /* filter bar */
+  .filter-bar{ max-width:900px; margin:26px auto 10px; padding:0 32px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .search-input{ flex:1; min-width:220px; max-width:420px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:11px 20px; font-size:14px; box-shadow:var(--shadow-sm); outline:none; }
+  .search-input:focus{ border-color:var(--royal); }
+  .tag-filter{ background:#fff; border:1px solid var(--border); border-radius:999px; padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer; color:var(--muted); transition:.2s; }
+  .tag-filter.active{ background:var(--gradient); color:#fff; border-color:transparent; }
+
+  /* scheme grid */
+  main{ max-width:1200px; margin:auto; padding:30px 32px 70px; }
+  .scheme-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:20px; }
+  .scheme-card{ background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow-sm); transition:.25s; display:flex; flex-direction:column; }
+  .scheme-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-md); }
+  .scheme-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .scheme-icon{ width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--royal),var(--purple)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .scheme-sector{ font-size:11px; font-weight:700; color:var(--royal); background:#E9EBFF; padding:4px 10px; border-radius:999px; }
+  .scheme-card h3{ font-size:17.5px; margin-bottom:6px; }
+  .scheme-card p{ color:var(--muted); font-size:13.5px; margin-bottom:14px; flex:1; }
+  .scheme-meta{ font-size:12.5px; color:var(--muted); margin-bottom:14px; display:flex; gap:6px; align-items:center; }
+  .apply-btn{ align-self:flex-start; background:var(--gradient); color:#fff; font-size:13.5px; font-weight:600; border:none; border-radius:999px; padding:9px 18px; cursor:pointer; }
+  .no-results{ text-align:center; color:var(--muted); padding:60px 20px; font-size:15px; grid-column:1/-1; }
+
+  .site-nav{ border-top:1px solid var(--border); background:#fff; padding:22px 32px; }
+  .nav-inner{ max-width:900px; margin:auto; display:flex; justify-content:center; gap:34px; flex-wrap:wrap; }
+  .nav-inner a{ font-size:14px; font-weight:600; color:var(--muted); transition:.2s; }
+  .nav-inner a:hover{ color:var(--royal); }
+
+  footer{ text-align:center; padding:26px; color:var(--muted); font-size:13.5px; border-top:1px solid var(--border); }
+
+  #backToTop{
+    position:fixed; bottom:26px; right:26px; width:46px; height:46px; border-radius:50%;
+    background:var(--gradient); color:#fff; border:none; font-size:20px; cursor:pointer;
+    box-shadow:var(--shadow-md); opacity:0; pointer-events:none; transform:translateY(10px);
+    transition:.25s; z-index:20;
+  }
+  #backToTop.show{ opacity:1; pointer-events:auto; transform:translateY(0); }
+  #backToTop:hover{ transform:translateY(-3px); }
+
+  @media (max-width:900px){ .scheme-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:600px){
+    .scheme-grid{ grid-template-columns:1fr; }
+    .back-link{ display:none; }
+    .page-title{ flex-direction:column; gap:10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <div class="brand">
+      <img src="logo.png" alt="Opportunity Hub logo" class="brand-mark">
+      <span class="gradient-text brand-name">Opportunity Hub</span>
+    </div>
+    <a href="index.html" class="back-link">← Back to home</a>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="page-title">
+    <div class="title-icon">📜</div>
+    <h1 class="gradient-text">Government Schemes</h1>
+  </div>
+  <p>Browse welfare, education, health, and development schemes — search or filter by sector to find what fits you.</p>
+</div>
+
+<div class="filter-bar">
+  <input type="text" class="search-input" id="searchInput" placeholder="Search schemes by name..." oninput="renderSchemes()">
+</div>
+<div class="filter-bar" id="tagFilterBar"></div>
+
+<main>
+  <div class="scheme-grid" id="schemeGrid"></div>
+</main>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html">Home</a>
+    <a href="schemes.html">Schemes</a>
+    <a href="index.html#categories">Scholarships</a>
+    <a href="index.html#categories">Internships</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#about">Contact</a>
+  </div>
+</nav>
+
+<footer>© 2026 Opportunity Hub. All rights reserved.</footer>
+
+<button id="backToTop" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
+<script>
+  // ---- Sample scheme data ----
+  // Replace this array with a real API call to your backend/database later.
+  const schemes = [
+    { name: "PM Vishwakarma Yojana", sector: "Livelihood", desc: "Financial and skill support for traditional artisans and craftspeople.", icon: "🛠️", eligibility: "Artisans & craftspeople" },
+    { name: "Ayushman Bharat", sector: "Health", desc: "Free health insurance coverage up to ₹5 lakh per family per year.", icon: "🏥", eligibility: "Low-income families" },
+    { name: "PM Awas Yojana", sector: "Housing", desc: "Financial assistance for building or purchasing a pucca house.", icon: "🏠", eligibility: "EWS/LIG households" },
+    { name: "Startup India Seed Fund", sector: "Business", desc: "Seed funding support for early-stage startups and entrepreneurs.", icon: "🚀", eligibility: "Registered startups" },
+    { name: "PM Kisan Samman Nidhi", sector: "Agriculture", desc: "Direct income support of ₹6,000/year to small and marginal farmers.", icon: "🌾", eligibility: "Landholding farmers" },
+    { name: "Beti Bachao Beti Padhao", sector: "Welfare", desc: "Support scheme promoting the education and welfare of the girl child.", icon: "👧", eligibility: "Families with girl children" },
+    { name: "Stand-Up India", sector: "Business", desc: "Bank loans between ₹10 lakh–1 crore for SC/ST and women entrepreneurs.", icon: "📈", eligibility: "SC/ST & women entrepreneurs" },
+    { name: "PM Ujjwala Yojana", sector: "Welfare", desc: "Free LPG gas connections for women from below-poverty-line households.", icon: "🔥", eligibility: "BPL women" },
+    { name: "Atal Pension Yojana", sector: "Finance", desc: "Guaranteed pension scheme for workers in the unorganised sector.", icon: "💰", eligibility: "Ages 18–40, unorganised sector" },
+    { name: "Skill India Mission", sector: "Skill Development", desc: "Free vocational training and certification across various trades.", icon: "🧰", eligibility: "Youth, all education levels" },
+    { name: "Jal Jeevan Mission", sector: "Infrastructure", desc: "Scheme to provide functional household tap water connections.", icon: "💧", eligibility: "Rural households" },
+    { name: "Digital India Initiative", sector: "Technology", desc: "Support for digital literacy and access to online government services.", icon: "💻", eligibility: "All citizens" }
+  ];
+
+  let activeTag = "All";
+
+  function buildTagFilters(){
+    const tags = ["All", ...new Set(schemes.map(s => s.sector))];
+    const bar = document.getElementById('tagFilterBar');
+    bar.innerHTML = tags.map(tag =>
+      `<button class="tag-filter ${tag === activeTag ? 'active' : ''}" onclick="setTag('${tag}')">${tag}</button>`
+    ).join('');
+  }
+
+  function setTag(tag){
+    activeTag = tag;
+    buildTagFilters();
+    renderSchemes();
+  }
+
+  function renderSchemes(){
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const grid = document.getElementById('schemeGrid');
+
+    const filtered = schemes.filter(s => {
+      const matchesQuery = s.name.toLowerCase().includes(query);
+      const matchesTag = activeTag === "All" || s.sector === activeTag;
+      return matchesQuery && matchesTag;
+    });
+
+    grid.innerHTML = filtered.length ? filtered.map(s => `
+      <div class="scheme-card">
+        <div class="scheme-top">
+          <div class="scheme-icon">${s.icon}</div>
+          <span class="scheme-sector">${s.sector}</span>
+        </div>
+        <h3>${s.name}</h3>
+        <p>${s.desc}</p>
+        <div class="scheme-meta">👤 ${s.eligibility}</div>
+        <button class="apply-btn">View details →</button>
+      </div>
+    `).join('') : `<div class="no-results">No schemes match "${query || activeTag}".</div>`;
+  }
+
+  buildTagFilters();
+  renderSchemes();
+
+  function scrollToTop(){
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('show', window.scrollY > 500);
+  });
+</script>
+
+</body>
+</html>
